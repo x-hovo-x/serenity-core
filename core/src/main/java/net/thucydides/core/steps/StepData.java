@@ -1,5 +1,6 @@
 package net.thucydides.core.steps;
 
+import au.com.bytecode.opencsv.CSVReader;
 import com.google.common.collect.Lists;
 import net.thucydides.core.csv.CSVTestDataSource;
 import net.thucydides.core.csv.TestDataSource;
@@ -18,6 +19,9 @@ public final class StepData {
 
     private final String testDataSource;
     private char separator = ',';
+    private char quotechar = CSVReader.DEFAULT_QUOTE_CHARACTER;
+    private char escape = CSVReader.DEFAULT_ESCAPE_CHARACTER;
+    private int skipLines = CSVReader.DEFAULT_SKIP_LINES;
     private StepFactory factory;
 
     private static final ThreadLocal<StepFactory> factoryThreadLocal = new ThreadLocal<StepFactory>();
@@ -36,7 +40,7 @@ public final class StepData {
     public <T> T run(final T steps) throws IOException {
 
         useDefaultStepFactoryIfUnassigned();
-        TestDataSource testdata = new CSVTestDataSource(testDataSource, separator);
+        TestDataSource testdata = new CSVTestDataSource(testDataSource, separator, quotechar, escape, skipLines);
 
         StepEventBus.getEventBus().useExamplesFrom(dataTable(testdata));
 
@@ -90,6 +94,21 @@ public final class StepData {
 
     public StepData separatedBy(char newSeparator) {
         this.separator = newSeparator;
+        return this;
+    }
+
+    public StepData quoteChar(char quoteChar) {
+        this.quotechar = quoteChar;
+        return this;
+    }
+
+    public StepData escapeChar(char escapeChar) {
+        this.escape = escapeChar;
+        return this;
+    }
+
+    public StepData escapeChar(int skipLines) {
+        this.skipLines = skipLines;
         return this;
     }
 }
