@@ -303,6 +303,21 @@ public class WhenRunningStepsWithTestData {
     }
 
     @Test
+    public void should_be_able_to_use_test_data_with_escapechars() throws IOException {
+
+        TestSteps steps =  factory.getStepLibraryFor(TestSteps.class);
+
+        setDefaultStepFactory(factory);
+
+        StepEventBus.getEventBus().testStarted("some test");
+        withTestDataFrom("testdata/escape-char-test.csv").separatedBy(';').escapeChar('"').run(steps).step1();
+
+        verify(driver).get("Bill\\nSmith");
+        verify(driver).get("Joe");
+        verify(driver).get("Mary");
+    }
+
+    @Test
     public void should_be_able_to_use_different_step_libraries_in_the_same_test() throws IOException {
 
         TestSteps steps =  factory.getStepLibraryFor(TestSteps.class);
